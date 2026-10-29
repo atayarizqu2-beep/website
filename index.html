@@ -270,10 +270,11 @@
                     <!-- Direct Action Contact Buttons -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
                         <!-- WhatsApp -->
-                        <a href="https://wa.me/6285179981926?text=Halo%20Konfeksi%20Latansa,%20saya%20ingin%20bertanya%20mengenai%20produk%20katalog" target="_blank" class="...">
-    <i class="fa-brands fa-whatsapp text-xl"></i>
-    <span>WhatsApp CS</span>
-</a>
+                        <a href="https://wa.me/6285179981926?text=Halo%20Konfeksi%20Latansa,%20saya%20ingin%20bertanya%20mengenai%20produk%20katalog" 
+                           target="_blank" 
+                           class="flex items-center justify-center space-x-3 bg-[#25D366] text-white py-4 px-6 rounded-lg font-bold text-xs uppercase tracking-wider hover:opacity-90 transition shadow-md">
+                            <i class="fa-brands fa-whatsapp text-xl"></i>
+                            <span>WhatsApp CS</span>
                         </a>
 
                         <!-- Instagram -->
@@ -395,7 +396,7 @@
                         <div class="border-b border-black/10 flex space-x-6 text-xs font-bold uppercase tracking-wider mb-4">
                             <button onclick="switchTab('details')" id="tabBtn-details" class="pb-2 border-b-2 border-brand-dark text-brand-dark">Detail</button>
                             <button onclick="switchTab('materials')" id="tabBtn-materials" class="pb-2 border-b-2 border-transparent text-brand-muted hover:text-brand-dark">Bahan</button>
-                            <button onclick="switchTab('size')" id="tabBtn-size" class="pb-2 border-b-2 border-transparent text-brand-muted hover:text-brand-dark">Ukuran</button>
+                            <button onclick="switchTab('size')" id="tabBtn-size" class="pb-2 border-b-2 border-transparent text-brand-muted hover:text-brand-dark">Size Chart</button>
                         </div>
 
                         <!-- Tab Content -->
@@ -482,24 +483,9 @@
                 ],
                 details: 'Elegan.',
                 materials: 'Cotton Combed 24s Heavyweight, Lembut & Menyerap Keringat.',
-                size: 'S, M, L, XL, XXL, XXXL'
+                size: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'
             },
-            {
-                id: 'kaos-5',
-                category: 'Kaos',
-                name: 'Kaos Katun Lengan Pendekcoba coba',
-                price: 'Rp 65.000 - Rp 75.000',
-                image: 'https://github.com/atayarizqu2-beep/website/blob/main/_MG_0434.JPG?raw=true',
-                gallery: [
-                    'https://github.com/atayarizqu2-beep/website/blob/main/_MG_0435.JPG?raw=true',
-                    'https://github.com/atayarizqu2-beep/website/blob/main/_MG_0434.JPG?raw=true',
-                    'https://github.com/atayarizqu2-beep/website/blob/main/_MG_9183.JPG?raw=true'
-                ],
-                details: 'Elegan.',
-                materials: 'Cotton Combed 24s Heavyweight, Lembut & Menyerap Keringat.',
-                size: 'S, M, L, XL, XXL, XXXL'
-            },            
-            
+
             // KEMEJA
             {
                 id: 'kemeja-hijau-1',
@@ -623,7 +609,11 @@
 
         // Set initial state saat pertama kali dimuat
         window.addEventListener('DOMContentLoaded', () => {
-            history.replaceState({ view: 'home' }, '', window.location.pathname);
+            try {
+                history.replaceState({ view: 'home' }, '', window.location.pathname);
+            } catch (e) {
+                console.warn('History API not supported in blob/iframe sandbox environment');
+            }
             initScrollAnimations();
         });
 
@@ -644,7 +634,11 @@
         // Navigation Switcher & State Rendering
         function showHomeView(pushHistory = true) {
             if (pushHistory && history.state && history.state.view !== 'home') {
-                history.pushState({ view: 'home' }, '', window.location.pathname);
+                try {
+                    history.pushState({ view: 'home' }, '', window.location.pathname);
+                } catch (e) {
+                    console.warn('History API pushState skipped in sandbox environment');
+                }
             }
             renderHomeViewFromState();
         }
@@ -669,7 +663,11 @@
 
         function openCategoryView(categoryName, pushHistory = true) {
             if (pushHistory) {
-                history.pushState({ view: 'category', category: categoryName }, '', `#category-${categoryName.toLowerCase()}`);
+                try {
+                    history.pushState({ view: 'category', category: categoryName }, '', `#category-${categoryName.toLowerCase()}`);
+                } catch (e) {
+                    console.warn('History API pushState skipped in sandbox environment');
+                }
             }
             renderCategoryViewFromState(categoryName);
         }
@@ -764,7 +762,11 @@
             const q = query.toLowerCase();
             const matchedProducts = productsData.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
             
-            history.pushState({ view: 'search', query: query }, '', `#search-${encodeURIComponent(query)}`);
+            try {
+                history.pushState({ view: 'search', query: query }, '', `#search-${encodeURIComponent(query)}`);
+            } catch (e) {
+                console.warn('History API pushState skipped in sandbox environment');
+            }
 
             document.getElementById('homeView').classList.add('hidden');
             document.getElementById('categoryView').classList.remove('hidden');
@@ -812,7 +814,11 @@
             currentActiveProduct = product;
 
             // Push state modal ke history
-            history.pushState({ view: 'modal', productId: productId }, '', `#detail-${productId}`);
+            try {
+                history.pushState({ view: 'modal', productId: productId }, '', `#detail-${productId}`);
+            } catch (e) {
+                console.warn('History API pushState skipped in sandbox environment');
+            }
 
             // Populate Modal Content
             document.getElementById('modalTitle').innerText = product.name;
@@ -820,7 +826,7 @@
             document.getElementById('modalCategoryBadge').innerText = product.category;
             document.getElementById('modalMainImg').src = product.image;
 
-            // Set WhatsApp Link
+            // Set WhatsApp Link (Dinamis sesuai produk yang diklik)
             const waText = encodeURIComponent(`Halo Konfeksi Latansa, saya berminat memesan produk: *${product.name}* (${product.price}). Bisa dibantu info selengkapnya?`);
             document.getElementById('modalWaBtn').href = `https://wa.me/6285179981926?text=${waText}`;
 
@@ -847,7 +853,11 @@
         function closeProductModal(triggerBack = true) {
             document.getElementById('productDetailModal').classList.add('hidden');
             if (triggerBack && history.state && history.state.view === 'modal') {
-                history.back();
+                try {
+                    history.back();
+                } catch (e) {
+                    console.warn('History API back skipped in sandbox environment');
+                }
             }
         }
 
@@ -870,7 +880,7 @@
             } else if (tabName === 'materials') {
                 contentEl.innerHTML = `<p><strong class="text-brand-dark">Material:</strong> ${currentActiveProduct.materials}</p>`;
             } else if (tabName === 'size') {
-                contentEl.innerHTML = `<p><strong class="text-brand-dark">Pilihan Ukuran:</strong> ${currentActiveProduct.size}</p>`;
+                contentEl.innerHTML = `<p><strong class="text-brand-dark">Size Chart:</strong> ${currentActiveProduct.size}</p>`;
             }
         }
 
