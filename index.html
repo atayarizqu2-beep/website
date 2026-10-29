@@ -559,6 +559,31 @@
 
         let currentActiveProduct = null;
 
+        // ================= HISTORY / BACK BUTTON HANDLER =================
+        // Menangani navigasi tombol Back fisik HP/Browser
+        window.addEventListener('popstate', function(event) {
+            const modal = document.getElementById('productDetailModal');
+            
+            // Jika modal detail sedang terbuka, tutup modal saat tombol back ditekan
+            if (modal && !modal.classList.contains('hidden')) {
+                closeProductModal(false); // param false agar tidak melakukan history.back lagi
+                return;
+            }
+
+            // Jika sedang berada di tampilan kategori, kembali ke beranda
+            if (event.state && event.state.view === 'category') {
+                renderCategoryViewFromState(event.state.category);
+            } else {
+                renderHomeViewFromState();
+            }
+        });
+
+        // Set initial state saat pertama kali dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            history.replaceState({ view: 'home' }, '', window.location.pathname);
+            initScrollAnimations();
+        });
+
         // Intersection Observer for Smooth Reveal Effects
         function initScrollAnimations() {
             const reveals = document.querySelectorAll('.reveal');
@@ -573,10 +598,19 @@
             reveals.forEach(reveal => observer.observe(reveal));
         }
 
-        // Navigation Switcher
-        function showHomeView() {
+        // Navigation Switcher & State Rendering
+        function showHomeView(pushHistory = true) {
+            if (pushHistory && history.state && history.state.view !== 'home') {
+                history.pushState({ view: 'home' }, '', window.location.pathname);
+            }
+            renderHomeViewFromState();
+        }
+
+        function renderHomeViewFromState() {
             document.getElementById('homeView').classList.remove('hidden');
             document.getElementById('categoryView').classList.add('hidden');
+            const modal = document.getElementById('productDetailModal');
+            if (modal) modal.classList.add('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -590,9 +624,18 @@
             'Semua': 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=1600&q=80'
         };
 
-        function openCategoryView(categoryName) {
+        function openCategoryView(categoryName, pushHistory = true) {
+            if (pushHistory) {
+                history.pushState({ view: 'category', category: categoryName }, '', `#category-${categoryName.toLowerCase()}`);
+            }
+            renderCategoryViewFromState(categoryName);
+        }
+
+        function renderCategoryViewFromState(categoryName) {
             document.getElementById('homeView').classList.add('hidden');
             document.getElementById('categoryView').classList.remove('hidden');
+            const modal = document.getElementById('productDetailModal');
+            if (modal) modal.classList.add('hidden');
             
             // Update Title and Breadcrumb
             document.getElementById('categoryTitleBanner').innerText = categoryName.toUpperCase();
@@ -678,6 +721,8 @@
             const q = query.toLowerCase();
             const matchedProducts = productsData.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
             
+            history.pushState({ view: 'search', query: query }, '', `#search-${encodeURIComponent(query)}`);
+
             document.getElementById('homeView').classList.add('hidden');
             document.getElementById('categoryView').classList.remove('hidden');
             document.getElementById('categoryTitleBanner').innerText = `Pencarian: "${query}"`;
@@ -723,6 +768,9 @@
 
             currentActiveProduct = product;
 
+            // Push state modal ke history
+            history.pushState({ view: 'modal', productId: productId }, '', `#detail-${productId}`);
+
             // Populate Modal Content
             document.getElementById('modalTitle').innerText = product.name;
             document.getElementById('modalPrice').innerText = product.price;
@@ -753,8 +801,11 @@
             document.getElementById('productDetailModal').classList.remove('hidden');
         }
 
-        function closeProductModal() {
+        function closeProductModal(triggerBack = true) {
             document.getElementById('productDetailModal').classList.add('hidden');
+            if (triggerBack && history.state && history.state.view === 'modal') {
+                history.back();
+            }
         }
 
         function switchTab(tabName) {
