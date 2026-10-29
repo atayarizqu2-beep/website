@@ -128,17 +128,17 @@
         <!-- ================= PAGE 1: HOME VIEW ================= -->
         <div id="homeView" class="space-y-16 md:space-y-24 pb-16">
             
-            <!-- HERO SECTION (Full Image Banner) -->
-            <section class="relative bg-brand-card overflow-hidden border-b border-black/5 reveal">
-                <div class="w-full relative group cursor-pointer" onclick="navTo('categories-section')">
-                    <!-- Main Hero Image (Full Width Banner) -->
+            <!-- HERO SECTION (Full Image Banner - Responsive & Uncropped) -->
+            <section class="relative bg-brand-card overflow-hidden border-b border-black/5 reveal flex justify-center">
+                <div class="w-full relative group cursor-pointer flex justify-center" onclick="navTo('categories-section')">
+                    <!-- Main Hero Image (Fully Visible & Uncropped) -->
                     <img id="heroFullImage" 
                          src="https://github.com/atayarizqu2-beep/website/blob/main/WhatsApp%20Image%202026-10-26%20at%2012.50.25.jpeg?raw=true" 
                          alt="Konfeksi Latansa Hero Banner" 
-                         class="w-full h-[350px] sm:h-[500px] lg:h-[650px] object-cover transition-transform duration-700 ease-in-out group-hover:scale-[1.01]">
+                         class="w-full h-auto max-h-[85vh] object-contain transition-transform duration-700 ease-in-out group-hover:scale-[1.005]">
                     
                     <!-- Overlay Tipis agar Elegan (Opsional) -->
-                    <div class="absolute inset-0 bg-black/10 transition-opacity group-hover:bg-black/0"></div>
+                    <div class="absolute inset-0 bg-black/5 transition-opacity group-hover:bg-black/0 pointer-events-none"></div>
                 </div>
             </section>
 
@@ -485,7 +485,21 @@
                 materials: 'Cotton Combed 24s Heavyweight, Lembut & Menyerap Keringat.',
                 size: 'S, M, L, XL, XXL, XXXL'
             },
+        
             // KEMEJA
+            {
+                id: 'kemeja-hijau-1',
+                category: 'Kemeja',
+                name: 'Kemeja Hijau PDL Drill',
+                price: 'Rp 115.000 - Rp 135.000',
+                image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80',
+                gallery: [
+                    'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80'
+                ],
+                details: 'Kemeja PDL warna hijau taktis suitable untuk kegiatan outdoor, komunitas, dan lapangan.',
+                materials: 'Kain Japan Drill Premium, adem, tidak panas, dan tahan goresan.',
+                size: 'S, M, L, XL, XXL, 3XL'
+            },
             {
                 id: 'kemeja-1',
                 category: 'Kemeja',
